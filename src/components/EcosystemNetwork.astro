@@ -1,0 +1,183 @@
+---
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'en' } = Astro.props;
+---
+
+<svg viewBox="0 0 1440 760" role="img" aria-label="BeaversLab ecosystem network">
+  <defs>
+    <radialGradient id="nodeCyan" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#dcffff" />
+      <stop offset="35%" stop-color="#8cf3ff" />
+      <stop offset="65%" stop-color="#3ab0ff" />
+      <stop offset="100%" stop-color="rgba(58,176,255,0.12)" />
+    </radialGradient>
+    <radialGradient id="nodeGreen" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ebfff1" />
+      <stop offset="36%" stop-color="#a3ffb5" />
+      <stop offset="68%" stop-color="#56d487" />
+      <stop offset="100%" stop-color="rgba(86,212,135,0.1)" />
+    </radialGradient>
+    <radialGradient id="nodeViolet" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff3ff" />
+      <stop offset="38%" stop-color="#e49cff" />
+      <stop offset="68%" stop-color="#b258ff" />
+      <stop offset="100%" stop-color="rgba(178,88,255,0.1)" />
+    </radialGradient>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="10" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Waves -->
+  <path
+    class="wave wave-green"
+    d="M-10 160C110 190 200 168 290 116c90-51 180-65 275-25s196 61 308 22c111-39 215-55 309-30 93 24 179 59 282 21"
+  />
+  <path
+    class="wave wave-cyan"
+    d="M-20 214c126 47 218 45 312-6 94-52 193-71 299-32s190 67 307 43c117-25 215-74 328-56s160 41 242 44"
+  />
+  <path
+    class="wave wave-violet"
+    d="M78 121c83-10 171 10 251 45s176 57 283 39c107-17 178-53 275-50s182 38 268 61 173 31 286 8"
+  />
+  <path
+    class="wave wave-cyan"
+    d="M932 92c54 14 98 43 145 57s110 21 181 15 121-2 182 25"
+  />
+
+  <!-- Mesh Glows -->
+  <path
+    class="mesh-glow"
+    stroke="rgba(115,247,255,0.34)"
+    d="M178 378L536 242L704 140L916 194L1084 236L1224 415L742 392L356 396Z"
+  />
+  <path
+    class="mesh-glow"
+    stroke="rgba(199,121,255,0.32)"
+    d="M536 242L612 392L916 194L900 408L742 392L704 140Z"
+  />
+  <path
+    class="mesh-glow"
+    stroke="rgba(126,255,174,0.3)"
+    d="M356 396L472 534L612 392L742 392L908 578L1104 552L1224 415"
+  />
+
+  <!-- Mesh Lines -->
+  <path class="mesh-line cyan" d="M178 378L536 242L704 140L916 194L1084 236L1224 415" />
+  <path class="mesh-line cyan" d="M356 396L536 242L742 392L1084 236L1224 415" />
+  <path class="mesh-line violet" d="M472 534L536 242L612 392L742 392L908 578L916 194" />
+  <path class="mesh-line green" d="M356 396L472 534L612 392L900 408L1104 552L1224 415" />
+  <path class="mesh-line violet" d="M536 242L704 140L900 408L742 392L472 534" />
+  <path class="mesh-line green" d="M612 392L704 140L1084 236L1104 552L742 392L536 242" />
+  <path class="mesh-line cyan" d="M178 378L612 392L900 408L1224 415" />
+  <path class="mesh-line violet" d="M356 396L704 140L1084 236" />
+  <path class="mesh-line green" d="M536 242L908 578L1224 415" />
+  <path class="mesh-line cyan" d="M612 392L1104 552" />
+  <path class="mesh-line violet" d="M742 392L916 194L1104 552" />
+
+  <!-- Nodes -->
+  <g class="node">
+    <circle cx="178" cy="378" r="40" fill="rgba(58,176,255,0.18)" filter="url(#softGlow)" />
+    <circle cx="178" cy="378" r="31" fill="url(#nodeCyan)" />
+    <circle cx="178" cy="368" r="9" fill="none" stroke="rgba(229,252,255,0.95)" stroke-width="2.6" />
+    <path d="M162 392c7-14 25-14 32 0" fill="none" stroke="rgba(229,252,255,0.95)" stroke-width="2.6" stroke-linecap="round" />
+  </g>
+
+  <g class="node delay-1">
+    <circle cx="356" cy="396" r="34" fill="rgba(86,212,135,0.2)" filter="url(#softGlow)" />
+    <circle cx="356" cy="396" r="25" fill="url(#nodeGreen)" />
+    <circle cx="356" cy="396" r="9" fill="rgba(160,71,255,0.85)" />
+    <path d="M349 391c4 4 9 4 13 0M344 404c6-6 18-6 24 0" stroke="rgba(235,255,241,0.88)" stroke-width="2" fill="none" stroke-linecap="round" />
+  </g>
+
+  <g class="node delay-2">
+    <circle cx="536" cy="242" r="34" fill="rgba(86,212,135,0.18)" filter="url(#softGlow)" />
+    <circle cx="536" cy="242" r="24" fill="url(#nodeGreen)" />
+    <circle cx="536" cy="242" r="9" fill="rgba(194,119,255,0.85)" />
+    <path d="M528 247c5-4 11-4 16 0M525 237c3 5 19 5 22 0" stroke="rgba(235,255,241,0.88)" stroke-width="2" fill="none" stroke-linecap="round" />
+  </g>
+
+  <g class="node delay-3">
+    <circle cx="612" cy="392" r="38" fill="rgba(178,88,255,0.18)" filter="url(#softGlow)" />
+    <circle cx="612" cy="392" r="28" fill="url(#nodeViolet)" />
+    <circle cx="612" cy="392" r="11" fill="rgba(103,255,184,0.88)" />
+    <path d="M603 392h18M612 383v18" stroke="rgba(255,249,255,0.9)" stroke-width="2" stroke-linecap="round" />
+  </g>
+
+  <g class="node delay-2">
+    <circle cx="704" cy="140" r="40" fill="rgba(58,176,255,0.18)" filter="url(#softGlow)" />
+    <circle cx="704" cy="140" r="31" fill="url(#nodeCyan)" />
+    <circle cx="704" cy="130" r="9" fill="none" stroke="rgba(229,252,255,0.95)" stroke-width="2.6" />
+    <path d="M688 154c7-14 25-14 32 0" fill="none" stroke="rgba(229,252,255,0.95)" stroke-width="2.6" stroke-linecap="round" />
+  </g>
+
+  <g class="node delay-1">
+    <circle cx="742" cy="392" r="44" fill="rgba(58,176,255,0.16)" filter="url(#softGlow)" />
+    <circle cx="742" cy="392" r="33" fill="url(#nodeCyan)" />
+    <circle cx="742" cy="382" r="10" fill="none" stroke="rgba(229,252,255,0.95)" stroke-width="2.8" />
+    <path d="M725 408c8-15 26-15 34 0" fill="none" stroke="rgba(229,252,255,0.95)" stroke-width="2.8" stroke-linecap="round" />
+  </g>
+
+  <g class="node delay-3">
+    <circle cx="900" cy="408" r="40" fill="rgba(178,88,255,0.16)" filter="url(#softGlow)" />
+    <circle cx="900" cy="408" r="30" fill="url(#nodeViolet)" />
+    <circle cx="900" cy="408" r="11" fill="rgba(103,255,184,0.88)" />
+    <path d="M891 408h18M900 399v18" stroke="rgba(255,249,255,0.9)" stroke-width="2" stroke-linecap="round" />
+  </g>
+
+  <g class="node delay-2">
+    <circle cx="916" cy="194" r="38" fill="rgba(178,88,255,0.16)" filter="url(#softGlow)" />
+    <circle cx="916" cy="194" r="28" fill="url(#nodeViolet)" />
+    <circle cx="916" cy="194" r="10" fill="rgba(103,255,184,0.88)" />
+    <path d="M907 194h18M916 185v18" stroke="rgba(255,249,255,0.9)" stroke-width="2" stroke-linecap="round" />
+  </g>
+
+  <g class="node delay-1">
+    <circle cx="1084" cy="236" r="34" fill="rgba(86,212,135,0.18)" filter="url(#softGlow)" />
+    <circle cx="1084" cy="236" r="24" fill="url(#nodeGreen)" />
+    <circle cx="1084" cy="236" r="9" fill="rgba(160,71,255,0.85)" />
+    <path d="M1077 231c4 4 9 4 13 0M1072 244c6-6 18-6 24 0" stroke="rgba(235,255,241,0.88)" stroke-width="2" fill="none" stroke-linecap="round" />
+  </g>
+
+  <g class="node delay-3">
+    <circle cx="908" cy="578" r="38" fill="rgba(178,88,255,0.16)" filter="url(#softGlow)" />
+    <circle cx="908" cy="578" r="28" fill="url(#nodeViolet)" />
+    <circle cx="908" cy="578" r="10" fill="rgba(103,255,184,0.88)" />
+    <path d="M899 578h18M908 569v18" stroke="rgba(255,249,255,0.9)" stroke-width="2" stroke-linecap="round" />
+  </g>
+
+  <g class="node delay-2">
+    <circle cx="1104" cy="552" r="34" fill="rgba(86,212,135,0.18)" filter="url(#softGlow)" />
+    <circle cx="1104" cy="552" r="24" fill="url(#nodeGreen)" />
+    <circle cx="1104" cy="552" r="9" fill="rgba(160,71,255,0.85)" />
+    <path d="M1097 547c4 4 9 4 13 0M1092 560c6-6 18-6 24 0" stroke="rgba(235,255,241,0.88)" stroke-width="2" fill="none" stroke-linecap="round" />
+  </g>
+
+  <!-- Labels -->
+  <text class="label" x="118" y="446">{t(lang, 'agents.sarah')}</text>
+  <text class="label" x="408" y="275">{t(lang, 'agents.sarah')}</text>
+  <text class="label" x="650" y="210">{t(lang, 'agents.mark')}</text>
+  <text class="label" x="677" y="462">{t(lang, 'agents.mark')}</text>
+  <text class="label" x="823" y="235">{t(lang, 'agents.logos')}</text>
+  <text class="label" x="1026" y="261">{t(lang, 'agents.nexus')}</text>
+  <text class="label" x="824" y="488">{t(lang, 'agents.nova')}</text>
+  <text class="label" x="999" y="608">{t(lang, 'agents.nexus')}</text>
+  <text class="label" x="290" y="606">{t(lang, 'agents.logos')}</text>
+  <text class="label" x="515" y="632">{t(lang, 'agents.syntex')}</text>
+  <text class="label" x="840" y="640">{t(lang, 'agents.nexus')}</text>
+
+  <text class="label small" x="260" y="384">{t(lang, 'labels.dataStreams')}</text>
+  <text class="label small" x="560" y="384">{t(lang, 'labels.communication')}</text>
+  <text class="label small" x="690" y="603">{t(lang, 'labels.communication')}</text>
+  <text class="label" x="415" y="450">{t(lang, 'agents.syntex')}</text>
+</svg>

@@ -16,6 +16,15 @@ const { title = 'Astro Site' } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<!-- Google tag (gtag.js) -->
+		<script type="text/partytown" is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-CLQC3SK80Y"></script>
+		<script type="text/partytown" is:inline>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+
+			gtag('config', 'G-CLQC3SK80Y');
+		</script>
 	</head>
 	<body class="bg-gray-50 text-gray-900 min-h-screen">
 		<slot />

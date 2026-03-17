@@ -1,0 +1,39 @@
+---
+import '../styles/ecosystem.css';
+
+interface Props {
+  title?: string;
+  lang?: string;
+}
+
+const { title = 'BeaversLab Ecosystem', lang = 'en' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <!-- Google tag (gtag.js) -->
+    <script type="text/partytown" is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-CLQC3SK80Y"></script>
+    <script type="text/partytown" is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-CLQC3SK80Y');
+    </script>
+  </head>
+  <body>
+    <div class="page">
+      <div class="orb orb-a"></div>
+      <div class="orb orb-b"></div>
+      <div class="orb orb-c"></div>
+      <div class="corner-frame"></div>
+      <slot />
+    </div>
+  </body>
+</html>

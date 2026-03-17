@@ -1,0 +1,87 @@
+---
+import EcosystemLayout from '../../layouts/EcosystemLayout.astro';
+import BrandLogo from '../../components/BrandLogo.astro';
+import EcosystemNetwork from '../../components/EcosystemNetwork.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import LanguageSwitcher from '../../components/LanguageSwitcher.astro';
+import { t, type Lang } from '../../i18n';
+
+const lang: Lang = 'zh';
+
+const projects = [
+  { key: 'codex' as const, image: '/project-codex.webp', url: 'https://codex-intel.beaverslab.xyz' },
+  { key: 'crawfish' as const, image: '/project-openclaw.webp', url: 'https://openclaw-docs.beaverslab.xyz' },
+  { key: 'skills' as const, image: '/project-skills.webp', url: 'https://github.com/BeaversLab/beaver-skill' }
+];
+---
+
+<EcosystemLayout title={t(lang, 'meta.title')} lang={lang}>
+  <LanguageSwitcher currentLang={lang} />
+  <main class="shell">
+    {/* 
+    <div class="status-pill">
+      {t(lang, 'status.agents')}: <strong>51</strong> &nbsp;{t(lang, 'status.separator')}&nbsp; {t(lang, 'status.humans')}: <strong>4</strong> &nbsp;{t(lang, 'status.separator')}&nbsp;
+      {t(lang, 'status.operations')}: <strong>{t(lang, 'status.active')} (98.3%)</strong>
+    </div>
+    */}
+
+    <section class="hero">
+      <div class="brand">
+        <BrandLogo />
+        <div class="brand-copy">
+          <h1>{t(lang, 'brand.title').replace(t(lang, 'brand.titleHighlight'), '')}<span>{t(lang, 'brand.titleHighlight')}</span></h1>
+          <p>{t(lang, 'brand.subtitle')}</p>
+        </div>
+      </div>
+
+      {/* <h2 class="ecosystem-title">{t(lang, 'ecosystem.title')}</h2> */}
+
+      {/* 
+      <div class="field">
+        <EcosystemNetwork lang={lang} />
+      </div>
+      */}
+
+      <section class="projects" aria-label="Project showcase">
+        <h3 class="projects-title">{t(lang, 'projects.title')} <span>{t(lang, 'projects.subtitle')}</span></h3>
+        <div class="project-grid">
+          {projects.map(project => (
+            <ProjectCard 
+              name={t(lang, `projects.items.${project.key}.name`)}
+              description={t(lang, `projects.items.${project.key}.description`)}
+              image={project.image}
+              url={project.url}
+              lang={lang}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* 
+      <footer class="footer-bar">
+        <div class="feed">
+          <p><strong>{feedItems[0].agent}:</strong> {feedItems[0].message}</p>
+          <p>{feedItems[0].subMessage}</p>
+        </div>
+
+        <div class="latest">
+          <h4>{t(lang, 'footer.latest')} <span>{t(lang, 'footer.activity')}</span></h4>
+        </div>
+
+        <div class="feed">
+          <p><strong>{feedItems[1].agent}:</strong> {feedItems[1].message}</p>
+          <p><strong>{feedItems[2].agent}:</strong> {feedItems[2].message} {feedItems[2].subMessage}</p>
+        </div>
+
+        <a class="summon" href="#summon">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 7h20a4 4 0 0 1 4 4v9a4 4 0 0 1-4 4h-8l-6 5v-5H6a4 4 0 0 1-4-4v-9a4 4 0 0 1 4-4Z" />
+            <path d="M10 15h12M10 19h8" stroke-linecap="round" />
+          </svg>
+          {t(lang, 'footer.summon')}
+        </a>
+      </footer>
+      */}
+    </section>
+  </main>
+</EcosystemLayout>

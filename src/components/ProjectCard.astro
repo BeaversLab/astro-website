@@ -1,0 +1,102 @@
+---
+import { type Lang } from '../i18n';
+
+interface Props {
+  name: string;
+  description: string;
+  image: string;
+  url: string;
+  lang: Lang;
+}
+
+const { name, description, image, url, lang } = Astro.props;
+---
+
+<a href={url} class="card-link">
+  <article class="card">
+    <div class="card-visual">
+      <img src={image} alt={name} class="project-image" />
+    </div>
+
+    <div class="card-body">
+      <h3>{name}</h3>
+      <p class="description">{description}</p>
+    </div>
+  </article>
+</a>
+
+<style>
+  .card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .card-link:hover {
+    transform: translateY(-4px);
+  }
+
+  .card {
+    position: relative;
+    border: 1px solid rgba(110, 234, 255, 0.24);
+    border-radius: 22px;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(6, 20, 29, 0.75), rgba(8, 25, 36, 0.92));
+    box-shadow: 0 0 24px rgba(98, 244, 255, 0.24);
+    backdrop-filter: blur(12px);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    border-radius: 16px;
+    border: 1px solid rgba(156, 246, 255, 0.12);
+    pointer-events: none;
+  }
+
+  .card-visual {
+    position: relative;
+    height: 190px;
+    overflow: hidden;
+    background: rgba(2, 9, 16, 0.6);
+  }
+
+  .project-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .card-link:hover .project-image {
+    transform: scale(1.05);
+  }
+
+  .card-body {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  h3 {
+    margin: 0 0 10px;
+    font-size: 1.4rem;
+    letter-spacing: 0.03em;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #f1fcff;
+  }
+
+  .description {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: rgba(234, 247, 250, 0.82);
+  }
+</style>

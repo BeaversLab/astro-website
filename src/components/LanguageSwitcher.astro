@@ -1,0 +1,207 @@
+---
+import { t, getAvailableLanguages, type Lang } from '../i18n';
+
+interface Props {
+  currentLang: Lang;
+}
+
+const { currentLang } = Astro.props;
+
+const languages = getAvailableLanguages();
+const currentLangData = languages.find(l => l.code === currentLang) || languages[0];
+
+// Get current path without language prefix
+const currentPath = Astro.url.pathname.replace(/^\/(en|zh)\//, '/').replace(/^\/(en|zh)$/, '/');
+---
+
+<div class="language-switcher">
+  <button 
+    class="lang-dropdown-trigger" 
+    id="langDropdownTrigger" 
+    aria-haspopup="true" 
+    aria-expanded="false"
+    aria-label={t(currentLang, 'language.switcher.ariaLabel')}
+  >
+    <span class="flag">{currentLangData.flag}</span>
+    <span class="lang-name">{currentLangData.name}</span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <div class="lang-dropdown-menu" id="langDropdownMenu" role="menu">
+    {languages.map((lang) => (
+      <a
+        href={`/${lang.code}${currentPath}`}
+        class={`lang-option ${currentLang === lang.code ? 'active' : ''}`}
+        role="menuitem"
+        data-lang={lang.code}
+      >
+        <span class="flag">{lang.flag}</span>
+        <span class="lang-name">{lang.name}</span>
+        {currentLang === lang.code && (
+          <svg class="check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        )}
+      </a>
+    ))}
+  </div>
+</div>
+
+<script>
+  (function() {
+    const trigger = document.getElementById('langDropdownTrigger');
+    const menu = document.getElementById('langDropdownMenu');
+
+    if (!trigger || !menu) return;
+
+    // Toggle dropdown
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = menu.classList.toggle('open');
+      trigger.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', () => {
+      menu.classList.remove('open');
+      trigger.setAttribute('aria-expanded', 'false');
+    });
+
+    // Save language preference when selecting
+    menu.querySelectorAll('.lang-option').forEach(option => {
+      option.addEventListener('click', () => {
+        const lang = option.getAttribute('data-lang');
+        if (lang) {
+          localStorage.setItem('preferred-language', lang);
+        }
+      });
+    });
+  })();
+</script>
+
+<style>
+  .language-switcher {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+  }
+
+  .lang-dropdown-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 1px solid rgba(114, 239, 255, 0.42);
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(10, 31, 42, 0.72), rgba(5, 19, 27, 0.86));
+    color: rgba(239, 253, 255, 0.88);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 120px;
+  }
+
+  .lang-dropdown-trigger:hover {
+    background: linear-gradient(180deg, rgba(15, 47, 58, 0.88), rgba(8, 27, 36, 0.7));
+    border-color: rgba(138, 255, 194, 0.58);
+    box-shadow: 0 0 20px rgba(115, 247, 255, 0.22);
+  }
+
+  .lang-dropdown-trigger[aria-expanded="true"] {
+    border-color: rgba(138, 255, 194, 0.58);
+  }
+
+  .lang-dropdown-trigger[aria-expanded="true"] .chevron {
+    transform: rotate(180deg);
+  }
+
+  .flag {
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  .lang-name {
+    flex: 1;
+    text-align: left;
+  }
+
+  .chevron {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+    opacity: 0.7;
+  }
+
+  .lang-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 160px;
+    background: linear-gradient(180deg, rgba(10, 31, 42, 0.95), rgba(5, 19, 27, 0.98));
+    border: 1px solid rgba(114, 239, 255, 0.3);
+    border-radius: 12px;
+    padding: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(115, 247, 255, 0.1);
+    backdrop-filter: blur(12px);
+  }
+
+  .lang-dropdown-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .lang-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: rgba(239, 253, 255, 0.88);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.15s ease;
+  }
+
+  .lang-option:hover {
+    background: rgba(115, 247, 255, 0.1);
+  }
+
+  .lang-option.active {
+    background: rgba(115, 247, 255, 0.15);
+    color: var(--green);
+  }
+
+  .lang-option .check {
+    width: 16px;
+    height: 16px;
+    margin-left: auto;
+  }
+
+  @media (max-width: 640px) {
+    .language-switcher {
+      top: 10px;
+      right: 10px;
+    }
+
+    .lang-dropdown-trigger {
+      padding: 8px 12px;
+      min-width: auto;
+    }
+
+    .lang-name {
+      display: none;
+    }
+
+    .lang-dropdown-menu {
+      min-width: 140px;
+    }
+  }
+</style>

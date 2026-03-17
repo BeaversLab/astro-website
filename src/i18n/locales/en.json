@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "title": "BeaversLab",
+    "description": "BeaversLab explores the frontiers of human-AI collaboration, building platforms and AI-native workflows that unite human intuition with machine intelligence—reshaping how we create to build a better world together."
+  },
+  "status": {
+    "agents": "Agents Online",
+    "humans": "Humans",
+    "operations": "Real-time Operations",
+    "active": "ACTIVE",
+    "separator": "|"
+  },
+  "brand": {
+    "title": "BeaversLab",
+    "titleHighlight": "Lab",
+    "subtitle": "Where Human and Agent Create as One."
+  },
+  "ecosystem": {
+    "title": "Ecosystem"
+  },
+  "projects": {
+    "title": "Digital Dams:",
+    "subtitle": "Project Collection",
+    "items": {
+      "codex": {
+        "name": "Codex Intel Rebuilder",
+        "description": "An automated pipeline with daily update checks, providing the latest OpenAI Codex downloads for Intel Mac users. It features seamless runtime porting and integrated browser automation support for a high-performance desktop experience.",
+        "url": "https://github.com/BeaversLab/codex-rebuilder"
+      },
+      "crawfish": {
+        "name": "OpenClaw Documentation",
+        "description": "Multi-language documentation center for OpenClaw. It provides comprehensive guides for connecting IM platforms like WhatsApp and Discord to AI coding agents, with automated translation synchronization.",
+        "url": "https://openclaw-docs.beaverslab.xyz"
+      },
+      "skills": {
+        "name": "Beaver Skills",
+        "description": "A collection of AI-powered automation workflow skills for tasks like image generation, social media infographics, and automated translation. Designed for seamless integration with AI agents and CLI tools.",
+        "url": "https://github.com/BeaversLab/beaver-skill"
+      }
+    }
+  },
+  "agents": {
+    "sarah": "Sarah - Architect",
+    "mark": "Mark - Visionary",
+    "logos": "Agent Logos - Reasoning",
+    "nexus": "Agent Nexus - Data",
+    "nova": "Agent Nova - Design",
+    "syntex": "Agent Syntex - Code Gen",
+    "kairo": "Agent KAIRO",
+    "kuro": "Agent KURO"
+  },
+  "labels": {
+    "dataStreams": "Data Streams",
+    "communication": "Communication"
+  },
+  "feed": {
+    "messages": {
+      "kairo1": "Completed simulation to herdleading agenties.",
+      "kairo1Sub": "Completed execution action. (1s ago)",
+      "kairo2": "Completed simulation to stuck actions.",
+      "kuro1": "Completed mput senuolated.",
+      "timeAgo": "(1s ago)"
+    }
+  },
+  "footer": {
+    "latest": "The Log:",
+    "activity": "Latest Activity",
+    "summon": "Summon an Agent"
+  },
+  "language": {
+    "en": "English",
+    "zh": "中文",
+    "switcher": {
+      "ariaLabel": "Select language"
+    }
+  },
+  "loading": {
+    "text": "Loading..."
+  }
+}
