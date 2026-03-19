@@ -1,0 +1,198 @@
+{
+  "site": {
+    "name": "海狸实验室",
+    "titleTemplate": "%s · 海狸实验室",
+    "description": "探索人与人工智能协同工作的边界，打造人机协作平台与AI原生工作流。",
+    "twitter": {
+      "site": "@zozowind",   
+      "creator": "@zozowind"
+    }
+  },
+  "meta": {
+    "title": "海狸实验室",
+    "description": "海狸实验室致力于探索人与人工智能协同工作的边界，通过研发人机协作平台与AI原生工作流，打造让人类直觉与机器智能合二为一的工具与产品，重塑未来的创造方式，共同构建更美好的世界。"
+  },
+  "status": {
+    "agents": "在线智能体",
+    "humans": "人类",
+    "operations": "实时运行",
+    "active": "活跃",
+    "separator": "|"
+  },
+  "brand": {
+
+    "title": "海狸实验室",
+    "titleHighlight": "实验室",
+    "subtitle": "人契于机，化二为一"
+  },
+  "ecosystem": {
+    "title": "生态系统"
+  },
+  "projects": {
+    "title": "数字之坝：",
+    "subtitle": "项目合集",
+    "items": {
+      "codex": {
+        "name": "Codex Intel 重构器",
+        "description": "一个具备每日更新检查机制的自动化流水线，为 Intel Mac 用户提供最新的 OpenAI Codex 版本下载。它集成了无缝的运行时移植和浏览器自动化支持，打造极致的桌面生产力工具。",
+        "url": "https://codex-intel.beaverslab.xyz"
+      },
+      "crawfish": {
+        "name": "OpenClaw 多语言文档",
+        "description": "OpenClaw 的多语言文档中心。提供将 WhatsApp 和 Discord 等即时通讯平台连接到 AI 编程智能体的全面指南，支持自动化的多语言翻译同步。",
+        "url": "https://openclaw-docs.beaverslab.xyz"
+      },
+      "skills": {
+        "name": "Beaver Skills",
+        "description": "AI 驱动的自动化工作流技能合集。涵盖图像生成、社交媒体信息图创作、多语言翻译及工程发布等核心功能，可无缝集成至 AI 智能体与 CLI 工具。",
+        "url": "https://github.com/BeaversLab/beaver-skill"
+      }
+    }
+  },
+  "agents": {
+    "sarah": "Sarah - 架构师",
+    "mark": "Mark - 远见者",
+    "logos": "Logos 智能体 - 推理",
+    "nexus": "Nexus 智能体 - 数据",
+    "nova": "Nova 智能体 - 设计",
+    "syntex": "Syntex 智能体 - 代码生成",
+    "kairo": "KAIRO 智能体",
+    "kuro": "KURO 智能体"
+  },
+  "labels": {
+    "dataStreams": "数据流",
+    "communication": "通信"
+  },
+  "feed": {
+    "messages": {
+      "kairo1": "完成了对主导智能体的模拟。",
+      "kairo1Sub": "完成执行操作。(1秒前)",
+      "kairo2": "完成了对卡住操作的模拟。",
+      "kuro1": "完成了菜单模拟。",
+      "timeAgo": "(1秒前)"
+    }
+  },
+  "language": {
+    "en": "English",
+    "zh": "中文",
+    "name": "中文",
+    "switch": "切换语言",
+    "current": "当前语言",
+    "switcher": {
+      "ariaLabel": "选择语言"
+    }
+  },
+  "loading": {
+    "text": "加载中..."
+  },
+  "dateFormat": "YYYY年M月D日",
+  "post": {
+    "publishedAt": "发布于",
+    "modifiedAt": "修改于",
+    "relatedPosts": "相关文章"
+  },
+  "categories": {
+    "ai-agent": "AI 智能体",
+    "model": "模型"
+  },
+  "tags": {
+    "reflect": "沉思",
+    "media": "观阅",
+    "roam": "行走",
+    "risk": "风险",
+    "strategy": "策略",
+    "allocation": "配置",
+    "innovation": "创新",
+    "model": "模式",
+    "management": "管理",
+    "ai": "人工智能",
+    "agents": "智能体",
+    "tools": "工具"
+  },
+  "headings": {
+    "home": {
+      "title": "首页",
+      "h1": "海狸实验室",
+      "h2": "探索人与人工智能协同工作的边界"
+    },
+    "blog": {
+      "title": "博客",
+      "h1": "博客",
+      "h2": "探索人与人工智能协同工作的边界"
+    }
+  },
+  "navigation": {
+    "home": "首页",
+    "blog": "博客",
+    "archive": "归档",
+    "about": "关于"
+  },
+  "pages": {
+    "about": { "title": "关于" },
+    "author": { "title": "作者", "writingActivity": "更新记录" },
+    "posts": { "title": "所有文章" },
+    "categories": {
+      "title": "分类",
+      "h2": "浏览分类",
+      "description": "按主题浏览，基于分类发现更多文章。"
+    },
+    "tags": {
+      "title": "标签",
+      "h2": "浏览标签",
+      "description": "按主题浏览，基于标签发现更多文章。"
+    },
+    "archive": {
+      "title": "归档",
+      "h2": "浏览归档",
+      "description": "按月份浏览文章。"
+    }
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "出错了",
+    "notFound": "未找到",
+    "back": "返回",
+    "next": "下一页",
+    "previous": "上一页",
+    "readMore": "阅读更多",
+    "pagination": {
+      "totalPosts": "共 {count} 篇文章",
+      "totalPostsWithLang": "{lang}共 {count} 篇文章",
+      "pageInfo": "第 {current} 页，共 {total} 页",
+      "noPosts": "暂无文章",
+      "noPostsInCategory": "该分类下暂时没有文章，请稍后再来查看。"
+    }
+  },
+  "footer": {
+    "latest": "日志：",
+    "activity": "最新动态",
+    "summon": "召唤智能体",
+    "copyright": "版权所有",
+    "allRightsReserved": "保留所有权利",
+    "more": "更多",
+    "author": "作者",
+    "categories": "分类",
+    "tags": "标签",
+    "privacyPolicy": "隐私政策",
+    "termsOfService": "服务条款",
+    "contactUs": "联系我们"
+  },
+  "homepage": {
+    "latestBlog": "最新",
+    "latestBlogHighlight": "博客",
+    "viewAll": "查看全部文章 →",
+    "featuredPosts": "精选文章",
+    "topArticles": "热门文章",
+    "latestArticles": "最新文章"
+  },
+  "notFound": {
+    "title": "页面未找到",
+    "message": "抱歉，您访问的页面不存在或已被移除。",
+    "backToHome": "返回首页",
+    "browsePosts": "浏览文章"
+  },
+  "search": {
+    "title": "搜索",
+    "subtitle": "搜索你感兴趣的内容"
+  }
+}

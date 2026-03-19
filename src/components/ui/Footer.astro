@@ -1,0 +1,99 @@
+---
+import type { Lang } from '@/utils/i18n';
+import { t } from '@/utils/translations';
+import FooterNav from '@/ui/FooterNav.astro';
+import { Icon } from 'astro-icon/components';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+interface Props {
+  lang?: Lang;
+  githubUrl?: string;
+  rssUrl?: string;
+}
+
+const resolvedLang = ((Astro.currentLocale as Lang | undefined) ??
+  (Astro.props.lang as Lang | undefined) ??
+  'en') as Lang;
+
+const siteName = t(resolvedLang, 'site.name');
+const siteNameZh = t('zh', 'site.name');
+const siteNameEn = t('en', 'site.name');
+const siteNameCombined = `${siteNameZh} ${siteNameEn}`;
+
+const twitterHandleRaw = t(resolvedLang, 'site.twitter.site') || '';
+const twitterHandle = String(twitterHandleRaw).replace(/^@/, '');
+const xUrl = twitterHandle ? `https://x.com/${twitterHandle}` : 'https://x.com';
+const githubUrl: string =
+  (Astro.props.githubUrl as string | undefined) ?? 'https://github.com/BeaversLab';
+
+const rssUrl: string =
+  (Astro.props.rssUrl as string | undefined) ?? getRelativeLocaleUrl(resolvedLang, '/rss.xml');
+---
+
+<footer class="header-glass mb-6 w-full">
+  <div class="mx-auto max-w-7xl px-5 py-10 sm:px-8">
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+      <div class="flex flex-col md:col-span-1">
+        <div>
+          <a
+            href={getRelativeLocaleUrl(resolvedLang, '/')}
+            class="inline-flex items-center gap-2 text-xl font-semibold tracking-tight transition-opacity hover:opacity-80"
+            style="color: var(--text);"
+          >
+            {siteName}
+          </a>
+          <div class="mt-4 flex items-center gap-4 text-sm">
+            <a
+              href={xUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 rounded-md p-2 transition-all hover:bg-white/10"
+              style="color: var(--muted);"
+            >
+              <span aria-hidden="true"><Icon name="lucide:x" class="h-5 w-5" /></span>
+              <span class="sr-only">X</span>
+            </a>
+            <a
+              href={githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 rounded-md p-2 transition-all hover:bg-white/10"
+              style="color: var(--muted);"
+            >
+              <span aria-hidden="true"><Icon name="lucide:github" class="h-5 w-5" /></span>
+              <span class="sr-only">GitHub</span>
+            </a>
+            <a
+              href={rssUrl}
+              class="inline-flex items-center gap-1 rounded-md p-2 transition-all hover:bg-white/10"
+              style="color: var(--muted);"
+            >
+              <span aria-hidden="true"><Icon name="lucide:rss" class="h-5 w-5" /></span>
+              <span class="sr-only">RSS</span>
+            </a>
+          </div>
+        </div>
+
+        <div
+          class="mt-auto hidden flex-row items-baseline gap-2 text-[10px] md:flex"
+          style="color: var(--muted);"
+        >
+          <span>
+            &copy; {new Date().getFullYear()} {siteNameCombined}
+          </span>
+        </div>
+      </div>
+
+      <FooterNav lang={resolvedLang} />
+    </div>
+
+    <div
+      class="mt-10 flex flex-row items-center justify-center gap-2 text-[10px] md:hidden"
+      style="color: var(--muted);"
+    >
+      <span>
+        &copy; {new Date().getFullYear()} {siteNameCombined}
+      </span>
+    </div>
+  </div>
+</footer>

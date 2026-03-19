@@ -1,0 +1,138 @@
+---
+import { Image, Picture } from 'astro:assets';
+
+type LayoutType = 'constrained' | 'full-width' | 'fixed' | 'none';
+type FitType = 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
+
+interface Props {
+  src: any;
+  alt: string;
+
+  layout?: LayoutType;
+  fit?: FitType;
+  position?: string;
+  priority?: boolean;
+  inferSize?: boolean;
+  sizes?: string;
+  loading?: 'lazy' | 'eager';
+  decoding?: 'async' | 'sync' | 'auto';
+  fetchpriority?: 'high' | 'low' | 'auto';
+
+  class?: string;
+  width?: number;
+  height?: number;
+  rounded?: boolean;
+
+  asPicture?: boolean;
+}
+
+const {
+  src,
+  alt,
+  class: className,
+  layout,
+  fit,
+  position,
+  priority = false,
+  inferSize,
+  sizes,
+  loading,
+  decoding,
+  fetchpriority,
+  width,
+  height,
+  asPicture = true,
+  rounded = true,
+} = Astro.props as Props;
+
+const pictureFormats: Array<'avif'> = ['avif'];
+
+const isAbsoluteUrl = typeof src === 'string' && /^(https?:)?\/\//.test(src);
+const isLocalPublic = typeof src === 'string' && src.startsWith('/') && !isAbsoluteUrl;
+const isRemote = isAbsoluteUrl;
+
+const finalSrc = isLocalPublic ? src : src;
+
+const shouldInfer = inferSize ?? isRemote;
+
+// CSS object-fit and object-position styles (ensure proper browser-side cropping)
+const fitClass =
+  fit === 'cover'
+    ? 'object-cover'
+    : fit === 'contain'
+      ? 'object-contain'
+      : fit === 'fill'
+        ? 'object-fill'
+        : '';
+const positionClass =
+  position === 'center'
+    ? 'object-center'
+    : position === 'top'
+      ? 'object-top'
+      : position === 'bottom'
+        ? 'object-bottom'
+        : '';
+
+const roundedForImg = rounded ? 'rounded-lg' : '';
+const roundedForPicture = rounded ? 'rounded-lg overflow-hidden' : '';
+const imgClass = [className, fitClass, positionClass, roundedForImg].filter(Boolean).join(' ');
+const pictureClass = [className, fitClass, positionClass, roundedForPicture]
+  .filter(Boolean)
+  .join(' ');
+
+const resolvedLoading = priority ? 'eager' : (loading ?? 'lazy');
+const resolvedDecoding = decoding ?? (priority ? 'sync' : 'async');
+const resolvedFetchpriority = priority
+  ? 'high'
+  : (fetchpriority ?? (resolvedLoading === 'lazy' ? 'low' : 'auto'));
+
+const baseImgProps = {
+  alt,
+  class: imgClass,
+  ...(layout ? { layout } : {}),
+  ...(fit ? { fit } : {}),
+  ...(position ? { position } : {}),
+  ...(typeof width === 'number' ? { width: width } : {}),
+  ...(typeof height === 'number' ? { height: height } : {}),
+  priority,
+  loading: resolvedLoading,
+  decoding: resolvedDecoding,
+  fetchpriority: resolvedFetchpriority,
+  ...(sizes ? { sizes } : {}),
+};
+const basePictureProps = {
+  formats: pictureFormats,
+  fallbackFormat: 'avif' as const,
+  alt,
+  class: pictureClass,
+  ...(layout ? { layout } : {}),
+  ...(fit ? { fit } : {}),
+  ...(position ? { position } : {}),
+  ...(typeof width === 'number' ? { width: width } : {}),
+  ...(typeof height === 'number' ? { height: height } : {}),
+  priority,
+  loading: resolvedLoading,
+  decoding: resolvedDecoding,
+  fetchpriority: resolvedFetchpriority,
+  ...(sizes ? { sizes } : {}),
+};
+---
+{
+  isLocalPublic ? (
+    <img
+      src={finalSrc}
+      alt={alt}
+      class={imgClass}
+      loading={resolvedLoading}
+      decoding={resolvedDecoding}
+      fetchpriority={resolvedFetchpriority}
+      {...(typeof width === 'number' ? { width } : {})}
+      {...(typeof height === 'number' ? { height } : {})}
+      {...(sizes ? { sizes } : {})}
+    />
+  ) : asPicture ? (
+    <Picture src={finalSrc as any} {...basePictureProps} inferSize={shouldInfer} />
+  ) : (
+    <Image src={finalSrc as any} {...baseImgProps} inferSize={shouldInfer} />
+  )
+}

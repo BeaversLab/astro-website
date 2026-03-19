@@ -1,0 +1,69 @@
+---
+type SkeletonVariant = 'image' | 'title' | 'text' | 'line';
+
+interface Props {
+  variant?: SkeletonVariant;
+  width?: string;
+  height?: string;
+  class?: string;
+  rounded?: boolean;
+}
+
+const {
+  variant = 'text',
+  width,
+  height,
+  class: className = '',
+  rounded = true,
+} = Astro.props as Props;
+
+const variantClasses = {
+  image: 'h-48 w-full',
+  title: 'h-6 w-3/4',
+  text: 'h-4 w-full',
+  line: 'h-4 w-full',
+};
+
+const baseClass = variantClasses[variant];
+const roundedClass = rounded ? 'rounded-lg' : '';
+---
+
+<div
+  class={`skeleton-shimmer ${baseClass} ${roundedClass} ${className}`.trim()}
+  style={width || height
+    ? `${width ? `width: ${width};` : ''}${height ? `height: ${height};` : ''}`
+    : undefined}
+  aria-hidden="true"
+>
+</div>
+
+<style>
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--panel-strong) 0%,
+      var(--panel-strong) 40%,
+      var(--bg-2) 50%,
+      var(--panel-strong) 60%,
+      var(--panel-strong) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-shimmer {
+      animation: none;
+      background: var(--panel-strong);
+    }
+  }
+</style>

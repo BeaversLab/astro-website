@@ -1,0 +1,98 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import LandingLayout from '@/layouts/LandingLayout.astro';
+import Pagination from '@/features/Pagination.astro';
+import PostCardCover from '@/cards/PostCardCover.astro';
+import CardWithPriority from '@/features/CardWithPriority.astro';
+import type { Lang } from '@/utils/i18n';
+import { DEFAULT_LANG, SUPPORTED_LANGS, toAbsolute } from '@/utils/i18n';
+import { t } from '@/utils/translations';
+import type { GetStaticPaths, Page } from 'astro';
+import dayjs from 'dayjs';
+import { resolveDayjsLocale } from '@/utils/date';
+
+export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
+  const posts = await getCollection('post', (p) => !p.data.draft);
+  
+  return SUPPORTED_LANGS.flatMap((lang) => {
+    const listForLang = posts
+      .filter((p) => p.data.locales === lang)
+      .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+    
+    // Group posts by year and month to generate paths
+    const groups = listForLang.reduce((acc, post) => {
+      const date = dayjs(post.data.pubDate);
+      const year = date.year().toString();
+      const month = (date.month() + 1).toString().padStart(2, '0');
+      const key = `${year}/${month}`;
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(post);
+      return acc;
+    }, {} as Record<string, CollectionEntry<'post'>[]>);
+
+    return Object.entries(groups).flatMap(([key, items]) => {
+      const [year, month] = key.split('/');
+      return paginate(items, { 
+        pageSize: 12, 
+        params: { lang, year, month } 
+      });
+    });
+  });
+};
+
+type Post = CollectionEntry<'post'>;
+
+function toUrl(entry: Post, lang: Lang): string {
+  const idWithoutExt = entry.id.replace(/\.(md|mdx|markdown)$/i, '');
+  const slugWithoutLang = idWithoutExt.replace(new RegExp(`^${lang}/`), '');
+  return toAbsolute(lang, `/blog/posts/${slugWithoutLang}/`);
+}
+
+const lang = ((Astro.params.lang as Lang) || DEFAULT_LANG) as Lang;
+const year = Astro.params.year;
+const month = Astro.params.month;
+const pageParam = Astro.params.page as string | undefined;
+
+if (pageParam === '1') {
+  return Astro.redirect(toAbsolute(lang, `/blog/archive/${year}/${month}/`), 301);
+}
+
+const { page } = Astro.props as { page: Page<Post> };
+const items = page?.data ?? [];
+
+const archiveDate = dayjs(`${year}-${month}-01`).locale(resolveDayjsLocale(lang));
+const h1 = archiveDate.format('MMMM YYYY');
+const title = `${h1} - ${t(lang, 'pages.archive.title')}`;
+const description = `${t(lang, 'pages.archive.description')} ${h1}`;
+---
+
+<LandingLayout lang={lang} title={title} description={description} canonical={Astro.url.href}>
+  <fragment slot="header">
+    <h1 class="text-3xl font-bold tracking-tight sm:text-4xl" style="color: var(--text)">{h1}</h1>
+    <p class="mt-2" style="color: var(--muted)">{description}</p>
+  </fragment>
+
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      items.map((p, idx) => (
+        <CardWithPriority
+          component={PostCardCover}
+          index={idx}
+          props={{
+            href: toUrl(p, lang),
+            imageSrc: p.data.heroImage,
+            imageAlt: p.data.heroImageAlt,
+            title: p.data.title,
+            description: p.data.description,
+            date: p.data.pubDate,
+            category: p.data.category,
+            lang,
+            class: 'ring-1',
+          }}
+        />
+      ))
+    }
+  </div>
+
+  <Pagination page={page} class="mt-10" />
+</LandingLayout>

@@ -1,0 +1,69 @@
+---
+import { getCollection } from 'astro:content';
+import LandingLayout from '@/layouts/LandingLayout.astro';
+import type { Lang } from '@/utils/i18n';
+import { DEFAULT_LANG, SUPPORTED_LANGS } from '@/utils/i18n';
+import { categoryLabel, categorySlug } from '@/utils/translations';
+import { t } from '@/utils/translations';
+
+export async function getStaticPaths() {
+  return SUPPORTED_LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = ((Astro.params.lang as Lang) || DEFAULT_LANG) as Lang;
+
+const all = await getCollection('post', (p) => !p.data.draft && p.data.locales === lang);
+
+const categoryCounts = new Map<string, number>();
+for (const p of all) {
+  const slug = categorySlug(lang, p.data.category) ?? String(p.data.category || '').toLowerCase();
+  if (slug && /^[\x00-\x7F]*$/.test(slug)) {
+    categoryCounts.set(slug, (categoryCounts.get(slug) ?? 0) + 1);
+  }
+}
+
+const items = Array.from(categoryCounts.entries())
+  .sort((a, b) => b[1] - a[1])
+  .map(([slug, count]) => ({
+    slug,
+    label: categoryLabel(lang, slug) ?? slug,
+    href: `/${lang}/blog/category/${slug}/`,
+    count,
+  }));
+
+const pageTitle = t(lang, 'pages.categories.title');
+const description = t(lang, 'pages.categories.description');
+---
+
+<LandingLayout
+  lang={lang}
+  title={pageTitle}
+  description={description}
+  canonical={Astro.url.href}
+  centered={false}
+>
+  <section>
+    <h2 class="mb-4 text-lg font-semibold" style="color: var(--text)">
+      {t(lang, 'pages.categories.h2')}
+    </h2>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        items.map((it) => (
+          <a
+            href={it.href}
+            class="inline-flex w-full items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors hover:opacity-90"
+            style="border-color: var(--line); color: var(--text); background: var(--panel);"
+          >
+            <span class="min-w-0 flex-1 truncate">{it.label}</span>
+            <span
+              class="shrink-0 rounded-full px-2 py-0.5 text-xs"
+              style="background: var(--panel-strong); color: var(--muted);"
+            >
+              {it.count}
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</LandingLayout>

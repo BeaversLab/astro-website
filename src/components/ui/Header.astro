@@ -1,0 +1,77 @@
+---
+import type { Lang } from '@/utils/i18n';
+import { t } from '@/utils/translations';
+import LanguageSwitcher from '@/features/LanguageSwitcher.astro';
+import MobileNav from '@/ui/MobileNav.astro';
+import { Icon } from 'astro-icon/components';
+import { toAbsolute } from '@/utils/i18n';
+import { NAV_ITEMS } from '@/utils/navItems';
+
+const resolvedLang = ((Astro.currentLocale as Lang | undefined) ??
+  (Astro.props.lang as Lang | undefined) ??
+  'en') as Lang;
+
+const siteName = t(resolvedLang, 'site.name');
+---
+
+<header class="header-glass w-full">
+  <div class="mx-auto max-w-7xl px-5 sm:px-8">
+    <div class="grid h-18 grid-cols-[1fr_auto_1fr] items-center gap-4">
+      <a
+        href={toAbsolute(resolvedLang, '/')}
+        class="flex items-center justify-self-start transition-opacity hover:opacity-90"
+      >
+        <img src="/logo.webp" alt={siteName} class="h-8 w-8" loading="eager" />
+      </a>
+
+      <nav class="hidden items-center gap-8 lg:flex justify-self-center">
+        {
+          NAV_ITEMS.map((item) => (
+            <a
+              href={toAbsolute(resolvedLang, item.href)}
+              class="nav-link inline-flex items-center gap-1 py-2 text-base font-semibold no-underline hover:no-underline focus:no-underline"
+            >
+              {t(resolvedLang, `navigation.${item.key}`)}
+            </a>
+          ))
+        }
+      </nav>
+
+      <div class="flex items-center gap-3 justify-self-end">
+        <LanguageSwitcher lang={resolvedLang} />
+
+        <button
+          type="button"
+          class="rounded-md p-2.5 transition-colors hover:bg-white/10 lg:hidden"
+          style="color: var(--text);"
+          aria-label="Menu"
+          data-mobile-trigger
+        >
+          <Icon name="lucide:menu" class="h-6 w-6" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <MobileNav lang={resolvedLang} />
+</header>
+
+<script>
+  import { registerPageInit } from '@/utils/page-init';
+
+  registerPageInit('mobileMenu', () => {
+    const btn = document.querySelector('[data-mobile-trigger]');
+    if (!btn) return;
+
+    function handleMobileToggle() {
+      const panel = document.querySelector('[data-mobile-panel]');
+      if (panel) panel.classList.toggle('hidden');
+    }
+
+    btn.addEventListener('click', handleMobileToggle);
+
+    return () => {
+      btn.removeEventListener('click', handleMobileToggle);
+    };
+  });
+</script>

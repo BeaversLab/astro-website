@@ -1,0 +1,33 @@
+---
+import type { Lang } from '@/utils/i18n';
+import { t } from '@/utils/translations';
+import { NAV_ITEMS } from '@/utils/navItems';
+import { toAbsolute } from '@/utils/i18n';
+
+interface Props {
+  lang?: Lang;
+  class?: string;
+}
+const { lang, class: className } = Astro.props as Props;
+const resolvedLang = ((Astro.currentLocale as Lang | undefined) ??
+  (lang as Lang | undefined) ??
+  'en') as Lang;
+---
+
+<div class={`lg:hidden hidden mobile-nav-glass ${className ?? ''}`.trim()} data-mobile-panel>
+  <div class="mx-auto max-w-7xl px-5 py-3 sm:px-8">
+    <div class="space-y-1">
+      {
+        NAV_ITEMS.map((item) => (
+          <a
+            href={toAbsolute(resolvedLang, item.href)}
+            class="block rounded-sm px-2.5 py-1.5 text-sm font-medium transition-colors hover:bg-white/15"
+            style="color: var(--text);"
+          >
+            {t(resolvedLang, `navigation.${item.key}`)}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,158 @@
+---
+// Floating scroll navigation for reading pages
+---
+
+<div class="scroll-nav" data-scroll-nav aria-label="Page navigation">
+  <button type="button" data-scroll-top title="Top" aria-label="Scroll to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 19V5M5 12l7-7 7 7"/>
+    </svg>
+  </button>
+  <button type="button" data-scroll-page-up title="Page Up" aria-label="Page up">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 15l-6-6-6 6"/>
+    </svg>
+  </button>
+  <button type="button" data-scroll-page-down title="Page Down" aria-label="Page down">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 9l6 6 6-6"/>
+    </svg>
+  </button>
+  <button type="button" data-scroll-bottom title="Bottom" aria-label="Scroll to bottom">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 5v14M19 12l-7 7-7-7"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+  function initScrollNav() {
+    const nav = document.querySelector('[data-scroll-nav]') as HTMLElement | null;
+    if (!nav) return;
+
+    const OVERLAP_RATIO = 0.2;
+
+    function scrollByPage(direction: 1 | -1) {
+      const vh = window.innerHeight;
+      const scrollAmount = vh * (1 - OVERLAP_RATIO) * direction;
+      window.scrollBy({ top: scrollAmount, behavior: 'smooth' });
+    }
+
+    nav.querySelector('[data-scroll-top]')?.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    nav.querySelector('[data-scroll-bottom]')?.addEventListener('click', () => {
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+    });
+
+    nav.querySelector('[data-scroll-page-up]')?.addEventListener('click', () => {
+      scrollByPage(-1);
+    });
+
+    nav.querySelector('[data-scroll-page-down]')?.addEventListener('click', () => {
+      scrollByPage(1);
+    });
+
+    let ticking = false;
+    function updateVisibility() {
+      const scrollY = window.scrollY;
+      const show = scrollY > 200;
+      nav!.classList.toggle('visible', show);
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(updateVisibility);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    updateVisibility();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScrollNav);
+  } else {
+    initScrollNav();
+  }
+
+  document.addEventListener('astro:page-load', initScrollNav);
+</script>
+
+<style>
+  .scroll-nav {
+    position: fixed;
+    right: 1rem;
+    bottom: 2rem;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    opacity: 0;
+    transform: translateX(20px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .scroll-nav.visible {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  .scroll-nav button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel-strong);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .scroll-nav button:hover {
+    color: var(--cyan);
+    border-color: var(--cyan-soft);
+    box-shadow: 0 0 12px rgba(115, 247, 255, 0.15);
+    background: var(--panel-strong);
+  }
+
+  .scroll-nav button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  @media (max-width: 768px) {
+    .scroll-nav {
+      right: 0.75rem;
+      bottom: 1.5rem;
+    }
+
+    .scroll-nav button {
+      width: 34px;
+      height: 34px;
+    }
+
+    .scroll-nav button svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-nav {
+      transition: none;
+    }
+    .scroll-nav button {
+      transition: none;
+    }
+  }
+</style>

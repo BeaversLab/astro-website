@@ -1,0 +1,99 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import LandingLayout from '@/layouts/LandingLayout.astro';
+import Pagination from '@/features/Pagination.astro';
+import PostCardCover from '@/cards/PostCardCover.astro';
+import CardWithPriority from '@/features/CardWithPriority.astro';
+import type { Lang } from '@/utils/i18n';
+import { DEFAULT_LANG, SUPPORTED_LANGS } from '@/utils/i18n';
+import { tagLabel, tagSlug } from '@/utils/translations';
+import { t } from '@/utils/translations';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('post', (p) => !p.data.draft);
+  const slugs = new Set<string>();
+  for (const p of posts) {
+    const postLang = p.data.locales as Lang;
+    for (const tag of p.data.tags ?? []) {
+      const slug = tagSlug(postLang, tag) ?? String(tag || '').toLowerCase();
+      if (slug && /^[\x00-\x7F]*$/.test(slug)) slugs.add(slug);
+    }
+  }
+  return SUPPORTED_LANGS.flatMap((lang) =>
+    Array.from(slugs).map((slug) => ({ params: { lang, slug } })),
+  );
+}
+
+type Post = CollectionEntry<'post'>;
+
+function toUrl(entry: Post, lang: Lang): string {
+  const idWithoutExt = entry.id.replace(/\.(md|mdx|markdown)$/i, '');
+  const slugWithoutLang = idWithoutExt.replace(new RegExp(`^${lang}/`), '');
+  return `/${lang}/blog/posts/${slugWithoutLang}/`;
+}
+
+const PAGE_SIZE = 12;
+const lang = ((Astro.params.lang as Lang) || DEFAULT_LANG) as Lang;
+const slug = String(Astro.params.slug || '');
+
+const posts = await getCollection('post', (p) => !p.data.draft && p.data.locales === lang);
+const all = posts
+  .filter((p) => {
+    const tags = (p.data.tags ?? []).map((tagVal) => tagSlug(lang, tagVal) ?? String(tagVal).toLowerCase());
+    return tags.some((s) => s.toLowerCase() === slug.toLowerCase());
+  })
+  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+
+const items = all.slice(0, PAGE_SIZE);
+const total = all.length;
+const lastPage = Math.max(1, Math.ceil(total / PAGE_SIZE));
+const page = {
+  data: items,
+  start: 0,
+  end: items.length - 1,
+  total,
+  currentPage: 1,
+  size: PAGE_SIZE,
+  lastPage,
+  url: {
+    current: Astro.url.pathname,
+    prev: undefined,
+    next: lastPage > 1 ? `/${lang}/blog/tags/${slug}/2/` : undefined,
+    first: undefined,
+    last: lastPage > 1 ? `/${lang}/blog/tags/${slug}/${lastPage}/` : undefined,
+  },
+};
+
+const h1 = tagLabel(lang, slug) ?? slug;
+const title = h1;
+const description = t(lang, 'pages.tags.description');
+---
+
+<LandingLayout lang={lang} title={title} description={description} canonical={Astro.url.href}>
+  <fragment slot="header">
+    <h1 class="text-3xl font-bold tracking-tight sm:text-4xl" style="color: var(--text)">{h1}</h1>
+    <p class="mt-2" style="color: var(--muted)">{description}</p>
+  </fragment>
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      items.map((p, idx) => (
+        <CardWithPriority
+          component={PostCardCover}
+          index={idx}
+          props={{
+            href: toUrl(p, lang),
+            imageSrc: p.data.heroImage,
+            imageAlt: p.data.heroImageAlt,
+            title: p.data.title,
+            date: p.data.pubDate,
+            category: p.data.category,
+            lang,
+            class: 'ring-1',
+          }}
+        />
+      ))
+    }
+  </div>
+
+  <Pagination page={page} class="mt-10" />
+</LandingLayout>

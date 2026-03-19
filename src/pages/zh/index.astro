@@ -1,10 +1,13 @@
 ---
-import EcosystemLayout from '../../layouts/EcosystemLayout.astro';
+import MainLayout from '@/layouts/MainLayout.astro';
+import BaseHeader from '@/ui/BaseHeader.astro';
 import BrandLogo from '../../components/BrandLogo.astro';
-import EcosystemNetwork from '../../components/EcosystemNetwork.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
-import LanguageSwitcher from '../../components/LanguageSwitcher.astro';
 import { t, type Lang } from '../../i18n';
+import { getCollection } from 'astro:content';
+import { formatDate } from '@/utils/date';
+import { categoryLabel } from '@/utils/translations';
+import { toAbsolute } from '@/utils/i18n';
 
 const lang: Lang = 'zh';
 
@@ -13,20 +16,29 @@ const projects = [
   { key: 'crawfish' as const, image: '/project-openclaw.webp', url: 'https://openclaw-docs.beaverslab.xyz' },
   { key: 'skills' as const, image: '/project-skills.webp', url: 'https://github.com/BeaversLab/beaver-skill' }
 ];
+
+const posts = await getCollection('post', (p) => !p.data.draft && p.data.locales === lang);
+const latestPosts = posts
+  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
+  .slice(0, 6);
+
+function toUrl(entry: typeof latestPosts[0]): string {
+  const idWithoutExt = entry.id.replace(/\.(md|mdx|markdown)$/i, '');
+  const slug = idWithoutExt.replace(new RegExp(`^${lang}/`), '');
+  return toAbsolute(lang, `/blog/posts/${slug}/`);
+}
 ---
 
-<EcosystemLayout title={t(lang, 'meta.title')} lang={lang}>
-  <LanguageSwitcher currentLang={lang} />
-  <main class="shell">
-    {/* 
-    <div class="status-pill">
-      {t(lang, 'status.agents')}: <strong>51</strong> &nbsp;{t(lang, 'status.separator')}&nbsp; {t(lang, 'status.humans')}: <strong>4</strong> &nbsp;{t(lang, 'status.separator')}&nbsp;
-      {t(lang, 'status.operations')}: <strong>{t(lang, 'status.active')} (98.3%)</strong>
-    </div>
-    */}
+<MainLayout lang={lang}>
+  <BaseHeader slot="head" lang={lang} title={t(lang, 'meta.title')} />
 
-    <section class="hero">
-      <div class="brand">
+  <div slot="hero" class="homepage-hero">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="orb orb-c"></div>
+
+    <div class="mx-auto max-w-7xl px-5 sm:px-8">
+      <div class="brand-area">
         <BrandLogo />
         <div class="brand-copy">
           <h1>{t(lang, 'brand.title').replace(t(lang, 'brand.titleHighlight'), '')}<span>{t(lang, 'brand.titleHighlight')}</span></h1>
@@ -34,19 +46,11 @@ const projects = [
         </div>
       </div>
 
-      {/* <h2 class="ecosystem-title">{t(lang, 'ecosystem.title')}</h2> */}
-
-      {/* 
-      <div class="field">
-        <EcosystemNetwork lang={lang} />
-      </div>
-      */}
-
-      <section class="projects" aria-label="Project showcase">
-        <h3 class="projects-title">{t(lang, 'projects.title')} <span>{t(lang, 'projects.subtitle')}</span></h3>
+      <section class="projects-section" aria-label="Project showcase">
+        <h3 class="section-title">{t(lang, 'projects.title')} <span>{t(lang, 'projects.subtitle')}</span></h3>
         <div class="project-grid">
           {projects.map(project => (
-            <ProjectCard 
+            <ProjectCard
               name={t(lang, `projects.items.${project.key}.name`)}
               description={t(lang, `projects.items.${project.key}.description`)}
               image={project.image}
@@ -56,32 +60,302 @@ const projects = [
           ))}
         </div>
       </section>
+    </div>
+  </div>
 
-      {/* 
-      <footer class="footer-bar">
-        <div class="feed">
-          <p><strong>{feedItems[0].agent}:</strong> {feedItems[0].message}</p>
-          <p>{feedItems[0].subMessage}</p>
-        </div>
-
-        <div class="latest">
-          <h4>{t(lang, 'footer.latest')} <span>{t(lang, 'footer.activity')}</span></h4>
-        </div>
-
-        <div class="feed">
-          <p><strong>{feedItems[1].agent}:</strong> {feedItems[1].message}</p>
-          <p><strong>{feedItems[2].agent}:</strong> {feedItems[2].message} {feedItems[2].subMessage}</p>
-        </div>
-
-        <a class="summon" href="#summon">
-          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M6 7h20a4 4 0 0 1 4 4v9a4 4 0 0 1-4 4h-8l-6 5v-5H6a4 4 0 0 1-4-4v-9a4 4 0 0 1 4-4Z" />
-            <path d="M10 15h12M10 19h8" stroke-linecap="round" />
-          </svg>
-          {t(lang, 'footer.summon')}
-        </a>
-      </footer>
-      */}
+  {latestPosts.length > 0 && (
+    <section class="blog-section" aria-label="Latest blog posts">
+      <h3 class="section-title">{t(lang, 'homepage.latestBlog')} <span>{t(lang, 'homepage.latestBlogHighlight')}</span></h3>
+      <div class="blog-grid">
+        {latestPosts.map(post => (
+          <a href={toUrl(post)} class="blog-card">
+            <div class="blog-card-image">
+              <img src={post.data.heroImage} alt={post.data.heroImageAlt} loading="lazy" decoding="async" />
+            </div>
+            <div class="blog-card-body">
+              <div class="blog-card-meta">
+                {post.data.category && (
+                  <span class="blog-card-category">{categoryLabel(lang, post.data.category)}</span>
+                )}
+                <time datetime={new Date(post.data.pubDate).toISOString()} class="blog-card-date">
+                  {formatDate(post.data.pubDate, lang)}
+                </time>
+              </div>
+              <h4 class="blog-card-title">{post.data.title}</h4>
+              <p class="blog-card-desc">{post.data.description}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+      <div class="blog-view-all">
+        <a href={toAbsolute(lang, '/blog/')} class="blog-view-all-link">{t(lang, 'homepage.viewAll')}</a>
+      </div>
     </section>
-  </main>
-</EcosystemLayout>
+  )}
+</MainLayout>
+
+<style>
+  @import '../../styles/theme.css';
+
+  .homepage-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 20px 0 50px;
+  }
+
+  .brand-area {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 20px 0 10px;
+  }
+
+  .brand-copy h1 {
+    margin: 0;
+    font-size: clamp(2.2rem, 4.5vw, 4rem);
+    line-height: 0.95;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-shadow: 0 0 18px rgba(115, 247, 255, 0.2);
+  }
+
+  .brand-copy h1 span {
+    color: var(--cyan);
+    font-weight: 300;
+  }
+
+  .brand-copy p {
+    margin: 8px 0 0;
+    font-size: clamp(1rem, 1.6vw, 1.35rem);
+    color: rgba(242, 250, 255, 0.88);
+    letter-spacing: 0.025em;
+  }
+
+  .projects-section {
+    margin-top: 48px;
+  }
+
+  .section-title {
+    margin: 0 0 20px;
+    text-align: center;
+    font-size: clamp(1.5rem, 2.3vw, 2.45rem);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(241, 252, 255, 0.94);
+  }
+
+  .section-title span {
+    color: var(--cyan);
+  }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 26px;
+  }
+
+  .orb {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(12px);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .orb-a {
+    top: 12%;
+    left: 18%;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(80, 255, 200, 0.45), transparent 68%);
+    animation: drift 10s ease-in-out infinite alternate;
+  }
+
+  .orb-b {
+    top: 24%;
+    right: 12%;
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, rgba(93, 181, 255, 0.34), transparent 66%);
+    animation: drift 12s ease-in-out infinite alternate-reverse;
+  }
+
+  .orb-c {
+    bottom: 12%;
+    left: 42%;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(199, 121, 255, 0.28), transparent 68%);
+    animation: drift 9s ease-in-out infinite alternate;
+  }
+
+  @keyframes drift {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(18px, -20px, 0); }
+  }
+
+  .blog-section {
+    padding: 20px 0 40px;
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .blog-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--panel);
+    color: var(--text);
+    text-decoration: none;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .blog-card:hover {
+    background: var(--panel-strong);
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+  }
+
+  .blog-card:hover .blog-card-image img {
+    transform: scale(1.05);
+  }
+
+  .blog-card-image {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    overflow: hidden;
+    background: rgba(2, 9, 16, 0.6);
+  }
+
+  .blog-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .blog-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px 20px 22px;
+  }
+
+  .blog-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .blog-card-category {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--cyan-soft);
+    color: var(--cyan);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .blog-card-date {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  .blog-card-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text);
+  }
+
+  .blog-card-desc {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .blog-view-all {
+    text-align: center;
+    margin-top: 28px;
+  }
+
+  .blog-view-all-link {
+    display: inline-block;
+    padding: 14px 36px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--cyan);
+    text-decoration: none;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+  }
+
+  .blog-view-all-link:hover {
+    border-color: var(--cyan-soft);
+    box-shadow: 0 0 24px rgba(115, 247, 255, 0.22);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 1200px) {
+    .project-grid {
+      grid-template-columns: 1fr;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .blog-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 860px) {
+    .brand-area {
+      align-items: flex-start;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .brand-area {
+      gap: 12px;
+    }
+
+    .project-grid {
+      gap: 16px;
+    }
+
+    .blog-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .blog-card {
+      padding: 18px 16px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .orb { animation: none !important; }
+  }
+</style>

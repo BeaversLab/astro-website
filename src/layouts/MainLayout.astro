@@ -1,0 +1,44 @@
+---
+import Header from '@/ui/Header.astro';
+import Footer from '@/ui/Footer.astro';
+import GTMHead from '@/analytics/GTMHead.astro';
+import GTMBody from '@/analytics/GTMBody.astro';
+import type { Lang } from '@/utils/i18n';
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang: langProp = 'en' } = Astro.props as Props;
+const resolvedLang = ((Astro.currentLocale as Lang | undefined) ??
+  (langProp as Lang | undefined) ??
+  'en') as Lang;
+---
+
+<!doctype html>
+<html lang={resolvedLang} class="scroll-pt-20">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <slot name="head" />
+    <GTMHead />
+    <ClientRouter />
+    <script src="../utils/image-fade-in.ts"></script>
+  </head>
+  <body>
+    <div class="page-bg" aria-hidden="true"></div>
+    <div class="relative z-0 flex min-h-dvh flex-col">
+      <Header lang={resolvedLang} />
+      <slot name="hero" />
+      <main id="main" class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-5 md:px-6">
+        <slot />
+      </main>
+      <Footer lang={resolvedLang} />
+      <slot name="after" />
+    </div>
+    <GTMBody />
+  </body>
+</html>

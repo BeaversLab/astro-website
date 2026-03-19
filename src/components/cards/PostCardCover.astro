@@ -1,0 +1,152 @@
+---
+import OptimizedPicture from '@/features/OptimizedPicture.astro';
+import SkeletonCardCover from '@/ui/SkeletonCardCover.astro';
+import { formatDate } from '@/utils/date';
+import type { Lang } from '@/utils/i18n';
+import { categoryLabel } from '@/utils/translations';
+
+interface Props {
+  href?: string;
+  imageSrc: any;
+  imageAlt: string;
+  title: string;
+  description?: string;
+  date?: string | Date;
+  category?: string;
+  lang?: Lang;
+
+  priority?: boolean;
+  aspectClass?: string;
+  class?: string;
+  loading?: boolean;
+}
+
+const {
+  href,
+  imageSrc,
+  imageAlt,
+  title,
+  description,
+  date,
+  category,
+  lang = 'zh',
+  priority = false,
+  aspectClass = 'aspect-[16/9]',
+  class: className,
+  loading = false,
+} = Astro.props as Props;
+
+const Container = href ? 'a' : 'div';
+const containerAttrs = href ? { href } : {};
+---
+
+{
+  loading ? (
+    <SkeletonCardCover aspectClass={aspectClass} class={className} />
+  ) : (
+    <Container
+      {...containerAttrs}
+      class={`post-card group relative flex flex-col overflow-hidden rounded-2xl ${className ?? ''}`.trim()}
+    >
+      {/* Image area */}
+      <div class={`relative overflow-hidden ${aspectClass}`}>
+        <OptimizedPicture
+          src={imageSrc}
+          alt={imageAlt}
+          class="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-[800ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-[1.03]"
+          fit="cover"
+          position="center"
+          priority={priority}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+        />
+      </div>
+
+      {/* Content area */}
+      <div class="post-card__content flex flex-col gap-3 p-5">
+        {/* Category tag + date */}
+        <div class="flex items-center justify-between">
+          {category ? (
+            <span class="post-card__category">
+              {categoryLabel(lang, category)}
+            </span>
+          ) : (
+            <span />
+          )}
+          <span class="post-card__date">{date ? formatDate(date, lang) : ''}</span>
+        </div>
+
+        {/* Title */}
+        <h3
+          class="post-card__title"
+          style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"
+        >
+          {title}
+        </h3>
+
+        {/* Description/Abstract */}
+        {description && (
+          <p
+            class="post-card__desc"
+            style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"
+          >
+            {description}
+          </p>
+        )}
+      </div>
+
+      {href && (
+        <span class="pointer-events-none absolute inset-0 rounded-2xl ring-transparent ring-inset focus-within:ring-2 focus-within:ring-white/50" />
+      )}
+    </Container>
+  )
+}
+
+<style>
+  .post-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    transition: all 0.3s ease;
+  }
+
+  .post-card:hover {
+    background: var(--panel-strong);
+    border-color: var(--cyan-soft);
+    box-shadow: 0 0 20px rgba(115, 247, 255, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .post-card__category {
+    border-radius: 9999px;
+    padding: 0.15rem 0.6rem;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: var(--cyan-soft);
+    color: var(--cyan);
+  }
+
+  .post-card__date {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .post-card__title {
+    font-size: 1.1rem;
+    line-height: 1.4;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .post-card__desc {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  @media (min-width: 768px) {
+    .post-card__title {
+      font-size: 1.2rem;
+    }
+  }
+</style>

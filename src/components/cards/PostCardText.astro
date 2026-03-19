@@ -1,0 +1,136 @@
+---
+import type { Lang } from '@/utils/i18n';
+import { categoryLabel, tagLabel } from '@/utils/translations';
+import { formatDate } from '@/utils/date';
+
+interface Props {
+  href?: string;
+  title: string;
+  date?: string | Date;
+  category?: string;
+  tags?: string[];
+  lang?: Lang;
+  class?: string;
+}
+
+const {
+  href,
+  title,
+  date,
+  category,
+  tags = [],
+  lang = 'zh',
+  class: className,
+} = Astro.props as Props;
+
+const Container = href ? 'a' : 'div';
+const containerAttrs = href ? { href } : {};
+---
+
+<Container
+  {...containerAttrs}
+  class={`post-card-text group block w-full overflow-hidden rounded-md pl-2 pr-2 sm:pl-4 lg:pl-6 py-2 transition-all duration-200 ease-out hover:-translate-y-0.5 ${className ?? ''}`.trim()}
+>
+  <div class="flex items-center gap-6 text-sm">
+    <time
+      class="post-card-text__date"
+      datetime={date ? new Date(date).toISOString() : undefined}
+    >
+      {date ? formatDate(date, lang) : ''}
+    </time>
+
+    <div class="post-card-text__title">
+      {title}
+    </div>
+
+    {
+      tags.length > 0 && (
+        <span class="post-card-text__tags">
+          {tags.map((tg) => tagLabel(lang, tg)).join(', ')}
+        </span>
+      )
+    }
+
+    {
+      category && (
+        <span class="post-card-text__category">
+          {categoryLabel(lang, category)}
+        </span>
+      )
+    }
+  </div>
+</Container>
+
+<style>
+  .post-card-text {
+    background: transparent;
+  }
+
+  .post-card-text:hover {
+    background: var(--panel);
+  }
+
+  .post-card-text__date {
+    width: 7rem;
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+  }
+
+  @media (min-width: 640px) {
+    .post-card-text__date {
+      width: 8rem;
+    }
+  }
+
+  .post-card-text__title {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    color: var(--text);
+  }
+
+  .post-card-text__title:hover {
+    text-decoration: underline;
+  }
+
+  .post-card-text__tags {
+    margin-left: 1rem;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--muted);
+  }
+
+  @media (min-width: 640px) {
+    .post-card-text__tags {
+      margin-left: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .post-card-text__tags {
+      margin-left: 3rem;
+    }
+  }
+
+  .post-card-text__category {
+    width: 7rem;
+    flex-shrink: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
+    color: var(--muted);
+  }
+
+  @media (min-width: 640px) {
+    .post-card-text__category {
+      width: 9rem;
+    }
+  }
+</style>

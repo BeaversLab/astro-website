@@ -1,0 +1,61 @@
+---
+import { getCollection } from 'astro:content';
+import type { Lang } from '@/utils/i18n';
+import { toAbsolute } from '@/utils/i18n';
+import { t } from '@/utils/translations';
+import dayjs from 'dayjs';
+import { resolveDayjsLocale } from '@/utils/date';
+
+interface Props {
+  lang: Lang;
+  class?: string;
+}
+
+const { lang, class: className } = Astro.props as Props;
+
+const allPosts = await getCollection('post', (p) => !p.data.draft && p.data.locales === lang);
+
+// Group posts by year and month
+const archiveData = allPosts.reduce((acc, post) => {
+  const date = dayjs(post.data.pubDate);
+  const year = date.year();
+  const month = date.month() + 1; // 1-indexed
+  const key = `${year}-${month.toString().padStart(2, '0')}`;
+  
+  if (!acc[key]) {
+    acc[key] = {
+      year,
+      month,
+      count: 0,
+      label: date.locale(resolveDayjsLocale(lang)).format('MMMM YYYY')
+    };
+  }
+  acc[key].count++;
+  return acc;
+}, {} as Record<string, { year: number; month: number; count: number; label: string }>);
+
+const archives = Object.values(archiveData).sort((a, b) => {
+  if (a.year !== b.year) return b.year - a.year;
+  return b.month - a.month;
+});
+---
+
+{archives.length > 0 && (
+  <section class={className}>
+    <h2 class="text-xl font-bold mb-4" style="color: var(--text)">{t(lang, 'pages.archive.title')}</h2>
+    <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
+      {archives.map((archive) => (
+        <a
+          href={toAbsolute(lang, `/blog/archive/${archive.year}/${archive.month.toString().padStart(2, '0')}/`)}
+          class="flex items-center justify-between rounded-lg px-4 py-2 transition-colors hover:bg-white/10 ring-1"
+          style="background: var(--panel); border-color: var(--line); color: var(--text);"
+        >
+          <span class="text-sm font-medium">{archive.label}</span>
+          <span class="text-xs px-2 py-0.5 rounded-full" style="background: var(--cyan-soft); color: var(--cyan);">
+            {archive.count}
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+)}

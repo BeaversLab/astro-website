@@ -1,0 +1,17 @@
+:root {
+  --bg-0: #03111b;
+  --bg-1: #071c28;
+  --bg-2: #0a2735;
+  --cyan: #73f7ff;
+  --cyan-soft: rgba(115, 247, 255, 0.34);
+  --green: #7dffa6;
+  --green-soft: rgba(125, 255, 166, 0.28);
+  --violet: #c779ff;
+  --violet-soft: rgba(199, 121, 255, 0.28);
+  --text: #effdff;
+  --muted: rgba(223, 242, 247, 0.72);
+  --panel: rgba(4, 23, 31, 0.62);
+  --panel-strong: rgba(6, 30, 41, 0.88);
+  --line: rgba(113, 238, 255, 0.26);
+  --shadow: 0 0 24px rgba(98, 244, 255, 0.24), 0 0 56px rgba(134, 255, 190, 0.12);
+}

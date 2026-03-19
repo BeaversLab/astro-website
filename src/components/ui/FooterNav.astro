@@ -1,0 +1,123 @@
+---
+import type { Lang } from '@/utils/i18n';
+import { t } from '@/utils/translations';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+interface Props {
+  lang?: Lang;
+  class?: string;
+}
+const { lang, class: className } = Astro.props as Props;
+const resolvedLang = ((Astro.currentLocale as Lang | undefined) ??
+  (lang as Lang | undefined) ??
+  'en') as Lang;
+---
+
+<div class={`md:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-6 ${className ?? ''}`.trim()}>
+  <div>
+    <h3
+      class="mb-2 text-sm font-medium"
+      style="color: var(--text);"
+    >
+      {t(resolvedLang, 'navigation.blog')}
+    </h3>
+    <ul class="space-y-1">
+      <li>
+        <a
+          href={getRelativeLocaleUrl(resolvedLang, '/blog/')}
+          class="-ml-2 block w-fit rounded-md px-2 py-0.5 text-sm transition-all hover:bg-white/10"
+          style="color: var(--muted);"
+        >
+          {t(resolvedLang, 'homepage.latestArticles')}
+        </a>
+      </li>
+      <li>
+        <a
+          href={getRelativeLocaleUrl(resolvedLang, '/blog/tags/')}
+          class="-ml-2 block w-fit rounded-md px-2 py-0.5 text-sm transition-all hover:bg-white/10"
+          style="color: var(--muted);"
+        >
+          {t(resolvedLang, 'footer.tags')}
+        </a>
+      </li>
+      <li>
+        <a
+          href={getRelativeLocaleUrl(resolvedLang, '/author/')}
+          class="-ml-2 block w-fit rounded-md px-2 py-0.5 text-sm transition-all hover:bg-white/10"
+          style="color: var(--muted);"
+        >
+          {t(resolvedLang, 'footer.author')}
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div>
+    <h3
+      class="mb-2 text-sm font-medium"
+      style="color: var(--text);"
+    >
+      {t(resolvedLang, 'footer.categories')}
+    </h3>
+    <ul class="space-y-1">
+      <li>
+        <a
+          href={getRelativeLocaleUrl(resolvedLang, '/blog/category/ai-workflow/')}
+          class="-ml-2 block w-fit rounded-md px-2 py-0.5 text-sm transition-all hover:bg-white/10"
+          style="color: var(--muted);"
+        >
+          {t(resolvedLang, 'categories.ai-workflow')}
+        </a>
+      </li>
+      <li>
+        <a
+          href={getRelativeLocaleUrl(resolvedLang, '/blog/category/human-ai/')}
+          class="-ml-2 block w-fit rounded-md px-2 py-0.5 text-sm transition-all hover:bg-white/10"
+          style="color: var(--muted);"
+        >
+          {t(resolvedLang, 'categories.human-ai')}
+        </a>
+      </li>
+      <li>
+        <a
+          href={getRelativeLocaleUrl(resolvedLang, '/blog/category/tools-platform/')}
+          class="-ml-2 block w-fit rounded-md px-2 py-0.5 text-sm transition-all hover:bg-white/10"
+          style="color: var(--muted);"
+        >
+          {t(resolvedLang, 'categories.tools-platform')}
+        </a>
+      </li>
+      <li>
+        <a
+          href={getRelativeLocaleUrl(resolvedLang, '/blog/category/insights/')}
+          class="-ml-2 block w-fit rounded-md px-2 py-0.5 text-sm transition-all hover:bg-white/10"
+          style="color: var(--muted);"
+        >
+          {t(resolvedLang, 'categories.insights')}
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div>
+    <h3
+      class="mb-2 text-sm font-medium"
+      style="color: var(--text);"
+    >
+      Links
+    </h3>
+    <ul class="space-y-1">
+      <li>
+        <a
+          href="https://github.com/BeaversLab"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="-ml-2 block w-fit rounded-md px-2 py-0.5 text-sm transition-all hover:bg-white/10"
+          style="color: var(--muted);"
+        >
+          GitHub
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>

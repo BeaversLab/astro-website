@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content';
+import LandingLayout from '@/layouts/LandingLayout.astro';
+import ArchiveList from '@/widgets/ArchiveList.astro';
+import type { Lang } from '@/utils/i18n';
+import { DEFAULT_LANG, SUPPORTED_LANGS } from '@/utils/i18n';
+import { t } from '@/utils/translations';
+
+export async function getStaticPaths() {
+  return SUPPORTED_LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = ((Astro.params.lang as Lang) || DEFAULT_LANG) as Lang;
+const title = t(lang, 'pages.archive.title');
+const description = t(lang, 'pages.archive.description');
+---
+
+<LandingLayout lang={lang} title={title} description={description} canonical={Astro.url.href}>
+  <fragment slot="header">
+    <h1 class="text-3xl font-bold tracking-tight sm:text-4xl" style="color: var(--text)">{title}</h1>
+    <p class="mt-2" style="color: var(--muted)">{description}</p>
+  </fragment>
+
+  <div class="mt-8">
+    <ArchiveList lang={lang} />
+  </div>
+</LandingLayout>

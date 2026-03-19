@@ -1,0 +1,53 @@
+---
+import LandingLayout from '@/layouts/LandingLayout.astro';
+import Prose from '@/features/Prose.astro';
+import Search from 'astro-pagefind/components/Search';
+import { t } from '@/utils/translations';
+import type { Lang } from '@/utils/i18n';
+import { DEFAULT_LANG, SUPPORTED_LANGS, toAbsolute } from '@/utils/i18n';
+
+export async function getStaticPaths() {
+  const FLAG = '__I18N_404_GENERATED__';
+  if (process.env[FLAG]) return [];
+  process.env[FLAG] = 'true';
+  return SUPPORTED_LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = ((Astro.params.lang as Lang) || DEFAULT_LANG) as Lang;
+const title = t(lang, 'notFound.title');
+const message = t(lang, 'notFound.message');
+const searchHint = t(lang, 'search.subtitle');
+---
+
+<LandingLayout lang={lang} title={title} description={message} canonical={undefined} noindex>
+  <Prose lang={lang}>
+    <p class="text-center text-sm" style="color: var(--muted)">{searchHint}</p>
+  </Prose>
+
+  <div class="mt-6">
+    <div class="mx-auto w-full max-w-2xl">
+      <Search id="search-404" className="pagefind-ui w-full" uiOptions={{ showImages: false }} />
+    </div>
+  </div>
+
+  <div class="mt-6 text-center">
+    <div class="inline-flex flex-wrap items-center justify-center gap-2">
+      <a
+        href={toAbsolute(lang, '/')}
+        class="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm transition-colors hover:opacity-90"
+        style="border-color: var(--line); color: var(--text); background: var(--panel);"
+      >
+        <span aria-hidden>←</span>
+        <span>{t(lang, 'notFound.backToHome')}</span>
+      </a>
+      <a
+        href={toAbsolute(lang, '/blog/')}
+        class="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm transition-colors hover:opacity-90"
+        style="border-color: var(--line); color: var(--text); background: var(--panel);"
+      >
+        <span aria-hidden>🧭</span>
+        <span>{t(lang, 'notFound.browsePosts')}</span>
+      </a>
+    </div>
+  </div>
+</LandingLayout>
